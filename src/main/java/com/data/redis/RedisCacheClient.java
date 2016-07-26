@@ -68,20 +68,17 @@ public class RedisCacheClient implements CacheClient {
 			if (hosts.length > 2) {
 				for (String host : hosts) {
 					String[] address = host.split(":");
-					JedisShardInfo shard = new JedisShardInfo(address[0],
-							Integer.parseInt(address[1]), address[2]);
+					JedisShardInfo shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]), address[2]);
 					shards.add(shard);
 				}
 			} else {
 				for (String host : hosts) {
 					String[] address = host.split(":");
-					JedisShardInfo shard = new JedisShardInfo(address[0],
-							Integer.parseInt(address[1]));
+					JedisShardInfo shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]));
 					shards.add(shard);
 				}
 			}
-			pool = new ShardedJedisPool(config, shards, Hashing.MURMUR_HASH,
-					Sharded.DEFAULT_KEY_TAG_PATTERN);
+			pool = new ShardedJedisPool(config, shards, Hashing.MURMUR_HASH, Sharded.DEFAULT_KEY_TAG_PATTERN);
 		} catch (Exception ex) {
 			// logger.error("App="+app+"<Servers="+servers+"<shards.size="+shards.size()+"<");
 		}
@@ -256,12 +253,31 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public byte[] hget(byte[] key, byte[] field) {
-		return null;
+
+		ShardedJedis redis = pool.getResource();
+		byte[] result = null;
+		try {
+			result = redis.hget(key, field);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public String hget(String key, String field) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		String result = null;
+		try {
+			result = redis.hget(key, field);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
@@ -304,28 +320,64 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-
 		return result;
 	}
 
 	@Override
 	public List<byte[]> hmget(byte[] key, byte[]... fields) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		List<byte[]> result = null;
+		try {
+			result = redis.hmget(key, fields);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public List<String> hmget(String key, String... fields) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		List<String> result = null;
+		try {
+			result = redis.hmget(key, fields);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
+
 	}
 
 	@Override
 	public String hmset(byte[] key, Map<byte[], byte[]> hash) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		String result = null;
+		try {
+			result = redis.hmset(key, hash);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public String hmset(String key, Map<String, String> hash) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		String result = null;
+		try {
+			result = redis.hmset(key, hash);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
@@ -372,22 +424,58 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Set<byte[]> keys(byte[] pattern) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Set<byte[]> result = null;
+		try {
+			result = redis.hkeys(pattern);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Set<String> keys(String pattern) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Set<String> result = null;
+		try {
+			result = redis.hkeys(pattern);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long llen(String key) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Long resutl = -1L;
+		try {
+			redis.llen(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return resutl;
 	}
 
 	@Override
 	public Long lpush(byte[] key, byte[] value) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Long resutl = -1L;
+		try {
+			redis.lpush(key, value);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return resutl;
 	}
 
 	@Override
@@ -397,7 +485,7 @@ public class RedisCacheClient implements CacheClient {
 		try {
 			redis.lpush(key, value);
 		} catch (Exception ex) {
-			// logger.error("lpush", ex);
+			ex.printStackTrace();
 		} finally {
 			this.close(redis);
 		}
@@ -413,7 +501,7 @@ public class RedisCacheClient implements CacheClient {
 			for (Object obj : objs)
 				redis.lpush(key, obj.toString());
 		} catch (Exception ex) {
-			// logger.error("lpush", ex);
+			ex.printStackTrace();
 		} finally {
 			pipeline.sync();
 			this.close(redis);
@@ -442,7 +530,7 @@ public class RedisCacheClient implements CacheClient {
 		try {
 			result = redis.lrange(key, start, end);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			this.close(redis);
 		}
@@ -451,7 +539,16 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public List<Object> pipelined(ShardedJedisPipeline shardedJedisPipeline) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		List<Object> result = null;
+		try {
+			result = redis.pipelined(shardedJedisPipeline);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override

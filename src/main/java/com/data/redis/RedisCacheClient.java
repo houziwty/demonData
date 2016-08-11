@@ -68,13 +68,12 @@ public class RedisCacheClient implements CacheClient {
 			if (hosts.length > 2) {
 				for (String host : hosts) {
 					String[] address = host.split(":");
-					JedisShardInfo shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]), address[2]);
-					shards.add(shard);
-				}
-			} else {
-				for (String host : hosts) {
-					String[] address = host.split(":");
-					JedisShardInfo shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]));
+					JedisShardInfo shard;
+					if (address.length > 2) {
+						shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]), address[2]);
+					} else {
+						shard = new JedisShardInfo(address[0], Integer.parseInt(address[1]));
+					}
 					shards.add(shard);
 				}
 			}

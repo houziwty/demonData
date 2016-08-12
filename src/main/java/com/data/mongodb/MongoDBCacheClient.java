@@ -10,6 +10,8 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 public class MongoDBCacheClient implements MongoCacheClient {
 
@@ -17,7 +19,11 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 	private static MongoClientOptions options;
 
-	private static DBCollection dbCollection;
+//	private static DBCollection dbCollection;
+	
+	
+	private static MongoCollection dbCollection;
+	private static MongoDatabase mongoDatabase;
 	static {
 		options = MongoClientOptions.builder().connectionsPerHost(3000).threadsAllowedToBlockForConnectionMultiplier(10)
 				.readPreference(ReadPreference.nearest()).build();
@@ -31,8 +37,8 @@ public class MongoDBCacheClient implements MongoCacheClient {
 		String[] databaseInfo = dataBaseInfos.split(":");
 		String database;
 
-			 database = databaseInfo[0];
-				if (databaseInfo.length > 1) {
+		database = databaseInfo[0];
+		if (databaseInfo.length > 1) {
 			String userName = databaseInfo[1];
 			String password = databaseInfo[2];
 			mongoCredential = MongoCredential.createMongoCRCredential(userName, database, password.toCharArray());
@@ -46,9 +52,20 @@ public class MongoDBCacheClient implements MongoCacheClient {
 		}
 		if (true) {
 		}
-
 		mongoClient = new MongoClient(mgAddress);
-		 DB db=mongoClient.getDB(database);
+		mongoDatabase = mongoClient.getDatabase(database);
+		// DB db=mongoClient.getDB(database);
+	}
+
+	@Override
+	public void useDB(String db) {
+		mongoDatabase.createCollection(db);
+	}
+
+	@Override
+	public void dropDatabase(String db) {
+		dbCollection =  mongoDatabase.getCollection(db);
+		dbCollection.drop();
 	}
 
 }

@@ -53,19 +53,32 @@ public class MongoDBCacheClient implements MongoCacheClient {
 		if (true) {
 		}
 		mongoClient = new MongoClient(mgAddress);
+	
 		mongoDatabase = mongoClient.getDatabase(database);
 		// DB db=mongoClient.getDB(database);
 	}
 
+
+	
 	@Override
-	public void useDB(String db) {
-		mongoDatabase.createCollection(db);
+	public void createCollection(String name) {
+		mongoDatabase.createCollection(name);
 	}
 
 	@Override
-	public void dropDatabase(String db) {
-		dbCollection =  mongoDatabase.getCollection(db);
+	public void dropDatabase(String name) {
+		dbCollection =  mongoDatabase.getCollection(name);
 		dbCollection.drop();
+	}
+
+	@Override
+	public void save(Object o) {
+		
+	}
+
+	@Override
+	public <T> T findOne() {
+		return null;
 	}
 
 }

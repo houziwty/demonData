@@ -1,8 +1,12 @@
 package com.data.mongodb;
 
 public interface MongoCacheClient {
-	void useDB(String db);
+	void createCollection(String name);
 
-	void dropDatabase(String db);
+	void dropDatabase(String name);
+
+	void save(Object o);
+
+	<T> T findOne();
 
 }

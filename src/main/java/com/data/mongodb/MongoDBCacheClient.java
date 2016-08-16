@@ -83,8 +83,9 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void insert(String name,Object o) {
+	public void insertOne(String name,Object o) {
 		dbCollection =  mongoDatabase.getCollection(name);
 		dbCollection.insertOne(o);
 	}

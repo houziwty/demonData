@@ -5,7 +5,7 @@ public interface MongoCacheClient {
 
 	void dropCollection(String name);
 	
-	void insert(String name,Object o);
+	void insertOne(String name,Object o);
 
 	void save(Object o);
 

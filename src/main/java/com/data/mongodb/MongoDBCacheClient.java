@@ -66,7 +66,7 @@ public class MongoDBCacheClient implements MongoCacheClient {
 	}
 
 	@Override
-	public void dropDatabase(String name) {
+	public void dropCollection(String name) {
 		dbCollection =  mongoDatabase.getCollection(name);
 		dbCollection.drop();
 	}
@@ -79,6 +79,14 @@ public class MongoDBCacheClient implements MongoCacheClient {
 	@Override
 	public <T> T findOne() {
 		return null;
+	}
+
+
+
+	@Override
+	public void insert(String name,Object o) {
+		dbCollection =  mongoDatabase.getCollection(name);
+		dbCollection.insertOne(o);
 	}
 
 }

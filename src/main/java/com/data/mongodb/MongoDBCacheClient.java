@@ -19,9 +19,9 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 	private static MongoClientOptions options;
 
-//	private static DBCollection dbCollection;
-	
-	
+	// private static DBCollection dbCollection;
+
+	@SuppressWarnings("rawtypes")
 	private static MongoCollection dbCollection;
 	private static MongoDatabase mongoDatabase;
 	static {
@@ -53,13 +53,11 @@ public class MongoDBCacheClient implements MongoCacheClient {
 		if (true) {
 		}
 		mongoClient = new MongoClient(mgAddress);
-	
+
 		mongoDatabase = mongoClient.getDatabase(database);
 		// DB db=mongoClient.getDB(database);
 	}
 
-
-	
 	@Override
 	public void createCollection(String name) {
 		mongoDatabase.createCollection(name);
@@ -67,27 +65,32 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 	@Override
 	public void dropCollection(String name) {
-		dbCollection =  mongoDatabase.getCollection(name);
+		dbCollection = mongoDatabase.getCollection(name);
 		dbCollection.drop();
 	}
 
 	@Override
 	public void save(Object o) {
-		
 	}
 
 	@Override
 	public <T> T findOne() {
-		return null;
+		T result=(T) dbCollection.find();
+		return result;
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void insertOne(String name,Object o) {
-		dbCollection =  mongoDatabase.getCollection(name);
+	public void insertOne(String name, Object o) {
+		dbCollection = mongoDatabase.getCollection(name);
 		dbCollection.insertOne(o);
+
+	}
+
+	@Override
+	public void insertMany(String name, List<Object> o) {
+		dbCollection = mongoDatabase.getCollection(name);
+		dbCollection.insertMany(o);
 	}
 
 }

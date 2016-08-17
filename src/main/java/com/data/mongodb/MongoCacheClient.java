@@ -2,6 +2,10 @@ package com.data.mongodb;
 
 import java.util.List;
 
+import org.bson.conversions.Bson;
+
+import com.mongodb.BasicDBObject;
+
 public interface MongoCacheClient {
 	void createCollection(String name);
 
@@ -13,6 +17,6 @@ public interface MongoCacheClient {
 
 	void save(Object o);
 
-	<T> T findOne();
+	<T> T findOne(String name,BasicDBObject filter,Class<?> classz);
 
 }

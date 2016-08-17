@@ -3,6 +3,9 @@ package com.data.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.conversions.Bson;
+
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
@@ -53,8 +56,9 @@ public class MongoDBCacheClient implements MongoCacheClient {
 		if (true) {
 		}
 		mongoClient = new MongoClient(mgAddress);
-
+		
 		mongoDatabase = mongoClient.getDatabase(database);
+		
 		// DB db=mongoClient.getDB(database);
 	}
 
@@ -74,8 +78,9 @@ public class MongoDBCacheClient implements MongoCacheClient {
 	}
 
 	@Override
-	public <T> T findOne() {
-		T result=(T) dbCollection.find();
+	public <T> T findOne(String name, BasicDBObject filter, Class<?> classz) {
+		dbCollection = mongoDatabase.getCollection(name);
+		T result = (T) dbCollection.find(filter, classz);
 		return result;
 	}
 

@@ -552,7 +552,16 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long rpush(byte[] key, byte[] value) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Long result=-1L;
+		try {
+			result = redis.rpush(key, value);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
@@ -606,12 +615,38 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public String setex(byte[] key, int seconds, byte[] value) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		String result = "";
+		try {
+			if (redis != null) {
+				result = redis.setex(key, seconds, value);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
+
 	}
 
 	@Override
 	public Long setnx(byte[] key, byte[] value) {
-		return null;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
+
+		try {
+			if (redis != null) {
+				result = redis.setnx(key, value);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override

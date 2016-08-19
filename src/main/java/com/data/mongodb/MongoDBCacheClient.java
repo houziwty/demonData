@@ -77,6 +77,7 @@ public class MongoDBCacheClient implements MongoCacheClient {
 	public void save(Object o) {
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T findOne(String name, BasicDBObject filter, Class<?> classz) {
 		dbCollection = mongoDatabase.getCollection(name);
@@ -92,6 +93,7 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void insertMany(String name, List<Object> o) {
 		dbCollection = mongoDatabase.getCollection(name);

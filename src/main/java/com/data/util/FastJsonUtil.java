@@ -1,6 +1,5 @@
 package com.data.util;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
@@ -24,6 +23,7 @@ public final class FastJsonUtil {
 		return JSON.parseObject(text);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static final <T> T stringToObj(String data, T obj) {
 		return (T) JSON.parseObject(data, obj.getClass());
 	}

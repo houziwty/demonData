@@ -566,22 +566,58 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long sadd(byte[] key, byte[] member) {
-		return null;
+		ShardedJedis redis=pool.getResource();
+		Long result=-1L;
+		try {
+			result = redis.sadd(key, member);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long sadd(String key, String member) {
-		return null;
+		ShardedJedis redis=pool.getResource();
+		Long result=-1L;
+		try {
+			result = redis.sadd(key, member);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long scard(byte[] key) {
-		return null;
+		ShardedJedis redis=pool.getResource();
+		Long result=-1L;
+		try {
+			result = redis.scard(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long scard(String key) {
-		return null;
+		ShardedJedis redis=pool.getResource();
+		Long result=-1L;
+		try {
+			result = redis.scard(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override

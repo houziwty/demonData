@@ -687,17 +687,55 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public long setnx(String key, String value) {
-		return 0;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
+
+		try {
+			if (redis != null) {
+				result = redis.setnx(key, value);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Boolean sismember(byte[] key, byte[] member) {
-		return null;
+		Boolean result=false;
+		ShardedJedis redis = pool.getResource();
+		try {
+			if (redis != null) {
+				result = redis.sismember(key, member);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;		
+		
 	}
 
 	@Override
 	public Boolean sismember(String key, String member) {
-		return null;
+		Boolean result=false;
+		ShardedJedis redis = pool.getResource();
+		try {
+			if (redis != null) {
+				result = redis.sismember(key, member);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;		
 	}
 
 	@Override

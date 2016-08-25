@@ -12,6 +12,7 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.ShardedJedisPool;
+import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Tuple;
 import redis.clients.util.Hashing;
 import redis.clients.util.Sharded;
@@ -553,7 +554,7 @@ public class RedisCacheClient implements CacheClient {
 	@Override
 	public Long rpush(byte[] key, byte[] value) {
 		ShardedJedis redis = pool.getResource();
-		Long result=-1L;
+		Long result = -1L;
 		try {
 			result = redis.rpush(key, value);
 		} catch (Exception e) {
@@ -566,8 +567,8 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long sadd(byte[] key, byte[] member) {
-		ShardedJedis redis=pool.getResource();
-		Long result=-1L;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
 		try {
 			result = redis.sadd(key, member);
 		} catch (Exception e) {
@@ -580,8 +581,8 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long sadd(String key, String member) {
-		ShardedJedis redis=pool.getResource();
-		Long result=-1L;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
 		try {
 			result = redis.sadd(key, member);
 		} catch (Exception e) {
@@ -594,8 +595,8 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long scard(byte[] key) {
-		ShardedJedis redis=pool.getResource();
-		Long result=-1L;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
 		try {
 			result = redis.scard(key);
 		} catch (Exception e) {
@@ -608,8 +609,8 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long scard(String key) {
-		ShardedJedis redis=pool.getResource();
-		Long result=-1L;
+		ShardedJedis redis = pool.getResource();
+		Long result = -1L;
 		try {
 			result = redis.scard(key);
 		} catch (Exception e) {
@@ -705,7 +706,7 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Boolean sismember(byte[] key, byte[] member) {
-		Boolean result=false;
+		Boolean result = false;
 		ShardedJedis redis = pool.getResource();
 		try {
 			if (redis != null) {
@@ -717,13 +718,13 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;		
-		
+		return result;
+
 	}
 
 	@Override
 	public Boolean sismember(String key, String member) {
-		Boolean result=false;
+		Boolean result = false;
 		ShardedJedis redis = pool.getResource();
 		try {
 			if (redis != null) {
@@ -735,22 +736,60 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;		
+		return result;
 	}
 
 	@Override
 	public Set<byte[]> smembers(byte[] key) {
-		return null;
+		Set<byte[]> result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			if (redis != null) {
+				result = redis.smembers(key);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Set<String> smembers(String key) {
-		return null;
+		Set<String> result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			if (redis != null) {
+				result = redis.smembers(key);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
-	public List<byte[]> sort(String key, String patterns) {
-		return null;
+	public List<String> sort(String key, int start, int pageSize) {
+		List<String> result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			if (redis != null) {
+				SortingParams sortingParameters = new SortingParams();
+				sortingParameters.desc();
+				sortingParameters.limit(start, pageSize);
+				result = redis.sort(key, sortingParameters);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+
+		return result;
 	}
 
 	@Override

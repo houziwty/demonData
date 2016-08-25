@@ -106,7 +106,7 @@ public interface CacheClient {
 
 	Set<String> smembers(String key);
 
-	List<byte[]> sort(String key, String patterns);
+	List<String> sort(String key, int start,int pageSize);
 
 	byte[] spop(byte[] key);
 

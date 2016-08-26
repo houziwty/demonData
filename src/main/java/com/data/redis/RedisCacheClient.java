@@ -788,28 +788,63 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-
 		return result;
 	}
 
 	@Override
 	public byte[] spop(byte[] key) {
-		return null;
+		byte[] result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.spop(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public String spop(String key) {
-		return null;
+		String result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.spop(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public byte[] srandmember(byte[] key) {
-		return null;
+		byte[] result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.srandmember(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public String srandmember(String key) {
-		return null;
+		String result = null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.srandmember(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override

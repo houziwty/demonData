@@ -48,6 +48,13 @@ public	static interface TaskHandler {
 		this.threads = taskThreads;
 		this.delayThread = delayThread;
 	}
+	public void start(boolean hang){
+		
+	}
+	public void start(){
+		
+	}
+	
 	@Override
 	public void run() {
 

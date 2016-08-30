@@ -1,7 +1,5 @@
 package com.data.queue;
 
-import com.feinno.app.common.queue.QueueClient;
-import com.feinno.app.common.queue.QueueListener.TaskHandler;
 
 public class QueueListener implements Runnable {
 public	static interface TaskHandler {

@@ -849,12 +849,30 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long srem(byte[] key, byte[] member) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.srem(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long srem(String key, String member) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.srem(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override

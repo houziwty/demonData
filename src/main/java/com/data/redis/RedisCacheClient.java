@@ -877,7 +877,16 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public void zadd(String key, double score, String member) {
-
+		ShardedJedis redis = pool.getResource();
+		try {
+			Map<String, Double> scoreMembers = new HashMap<>();
+			scoreMembers.put(member, score);
+			redis.zadd(key, scoreMembers);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
 	}
 
 	@Override

@@ -891,27 +891,72 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long zcard(byte[] key) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zcard(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zcard(String key) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zcard(key);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zcount(byte[] key, long min, long max) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zcount(key, min, max);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zcount(String key, long min, long max) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zcount(key, min, max);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;	
 	}
 
 	@Override
 	public Set<byte[]> zrange(byte[] key, int start, int end) {
-		return null;
+		Set<byte[]> result=null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zrange(key, start, end);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;			
 	}
 
 	@Override

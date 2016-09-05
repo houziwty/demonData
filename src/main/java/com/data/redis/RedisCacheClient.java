@@ -961,12 +961,30 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Set<String> zrange(String key, int start, int end) {
-		return null;
+		Set<String> result=null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zrange(key, start, end);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;	
 	}
 
 	@Override
 	public Set<byte[]> zrangeByScore(byte[] key, long min, long max) {
-		return null;
+		Set<byte[]> result=null;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zrangeByScore(key, min, max);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;	
 	}
 
 	@Override

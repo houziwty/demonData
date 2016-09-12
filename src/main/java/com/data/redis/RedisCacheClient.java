@@ -942,12 +942,12 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public Set<byte[]> zrange(byte[] key, int start, int end) {
-		Set<byte[]> result=null;
+		Set<byte[]> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrange(key, start, end);
@@ -956,12 +956,12 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;			
+		return result;
 	}
 
 	@Override
 	public Set<String> zrange(String key, int start, int end) {
-		Set<String> result=null;
+		Set<String> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrange(key, start, end);
@@ -970,12 +970,12 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public Set<byte[]> zrangeByScore(byte[] key, long min, long max) {
-		Set<byte[]> result=null;
+		Set<byte[]> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrangeByScore(key, min, max);
@@ -984,12 +984,12 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public Set<String> zrangeByScore(String key, long min, long max) {
-		Set<String>result=null;
+		Set<String> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrangeByScore(key, min, max);
@@ -998,13 +998,13 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;		
+		return result;
 	}
 
 	@Override
 	public Set<Tuple> zrangeWithScores(byte[] key, int start, int end) {
-		
-		Set<Tuple>result=null;
+
+		Set<Tuple> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrangeWithScores(key, start, end);
@@ -1013,14 +1013,14 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
-		
+		return result;
+
 	}
 
 	@Override
 	public Set<Tuple> zrangeWithScores(String key, int start, int end) {
-		
-		Set<Tuple>result=null;
+
+		Set<Tuple> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrangeWithScores(key, start, end);
@@ -1029,13 +1029,13 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public Set<Tuple> zrevRangeWithScores(String key, int start, int end) {
-		
-		Set<Tuple>result=null;
+
+		Set<Tuple> result = null;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrevrangeWithScores(key, start, end);
@@ -1044,12 +1044,12 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public long zrem(byte[] key, byte[] member) {
-		long result=-1L;
+		long result = -1L;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrem(key, member);
@@ -1058,14 +1058,14 @@ public class RedisCacheClient implements CacheClient {
 		} finally {
 			this.close(redis);
 		}
-		return result;			
-		
+		return result;
+
 	}
 
 	@Override
 	public long zrem(String key, String member) {
 
-		long result=-1L;
+		long result = -1L;
 		ShardedJedis redis = pool.getResource();
 		try {
 			result = redis.zrem(key, member);
@@ -1079,26 +1079,63 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public Long zremrangeByScore(byte[] key, double start, double end) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zremrangeByScore(key, start, end);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zremrangeByScore(String key, double start, double end) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zremrangeByScore(key, start, end);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zrank(byte[] key, byte[] member) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zrank(key, member);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public Long zrevrank(byte[] key, byte[] member) {
-		return null;
+		Long result = -1L;
+		ShardedJedis redis = pool.getResource();
+		try {
+			result = redis.zrevrank(key, member);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.close(redis);
+		}
+		return result;
 	}
 
 	@Override
 	public void flushall() {
+		
 
 	}
 
@@ -1109,7 +1146,7 @@ public class RedisCacheClient implements CacheClient {
 
 	@Override
 	public List<Object> pipelined(Pipeline pipeline) {
-		return null;
+	return null;
 	}
 
 	@Override

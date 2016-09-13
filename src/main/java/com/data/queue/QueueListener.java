@@ -51,9 +51,19 @@ public class QueueListener implements Runnable {
 	}
 
 	public void start(boolean hang) {
+		// 主线程也包含在内了，兼容已经引用此处代码的逻辑
+		int end = hang ? threads - 1 : threads;
+		for (int i = 0; i < end; i++) {
+			Thread thread = new Thread(new QueueListener(this.queueClient, this.handler, this.threads));
+			thread.setDaemon(true);
+			thread.start();
+		}
+		if (hang)
+			this.run();
 	}
 
 	public void start() {
+		// 主线程也包含在内了，兼容已经引用此处代码的逻辑
 
 	}
 

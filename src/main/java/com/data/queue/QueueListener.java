@@ -32,14 +32,14 @@ public class QueueListener implements Runnable {
 						} catch (Exception e) {
 							LOGGER.error(e.toString(), e);
 						}
-					}else{
-					QueueClient client=queueClient.getQueueNormalClient();
-					long len=client.llen();
-					if(len>DELAY_THRESHOLD_DEFUALT){
-						client.delay();
-					}else{
-						Thread.sleep(SLEEP_MILLIS);
-					}
+					} else {
+						QueueClient client = queueClient.getQueueNormalClient();
+						long len = client.llen();
+						if (len > DELAY_THRESHOLD_DEFUALT) {
+							client.delay();
+						} else {
+							Thread.sleep(SLEEP_MILLIS);
+						}
 					}
 				} catch (Exception e) {
 					try {
@@ -111,7 +111,27 @@ public class QueueListener implements Runnable {
 
 	@Override
 	public void run() {
-
+		while (true) {
+			try {
+				List<byte[]> taskInfo = queueClient.dequeue();
+				if (taskInfo != null && taskInfo.size() >= 2) {
+					try {
+						this.handler.proccess(taskInfo.get(1));
+					} catch (Exception e) {
+						LOGGER.error(e.toString(), e);
+					}
+				} else {
+					Thread.sleep(SLEEP_MILLIS);
+				}
+			} catch (Exception e) {
+				try {
+					Thread.sleep(SLEEP_MILLIS);
+				} catch (Exception ex) {
+					LOGGER.error(ex.getMessage(), ex);
+				}
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
 	}
 
 }

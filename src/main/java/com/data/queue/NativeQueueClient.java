@@ -31,7 +31,6 @@ public class NativeQueueClient implements QueueClient {
 			a.enqueue(aa.getBytes());
 		}
 		new QueueListener(a,new TaskHandler(){
-
 			@Override
 			public void proccess(byte[] taskInfo) {
 				String str = taskInfo.toString();

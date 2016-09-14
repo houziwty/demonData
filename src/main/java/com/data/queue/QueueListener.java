@@ -114,9 +114,9 @@ public class QueueListener implements Runnable {
 		while (true) {
 			try {
 				List<byte[]> taskInfo = queueClient.dequeue();
-				if (taskInfo != null && taskInfo.size() >= 2) {
+				if (taskInfo != null && taskInfo.size() >= 1) {
 					try {
-						this.handler.proccess(taskInfo.get(1));
+						this.handler.proccess(taskInfo.get(0));
 					} catch (Exception e) {
 						LOGGER.error(e.toString(), e);
 					}

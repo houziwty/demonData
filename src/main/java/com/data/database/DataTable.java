@@ -1,5 +1,12 @@
 package com.data.database;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
 /** 
 * @ClassName: DataTable 
 * @Description:  * <b>描述：</b> 数据库表<br/>
@@ -16,5 +23,8 @@ package com.data.database;
 *  
 */
 public class DataTable {
-
+private static final DataColumn[]EMPTY_COLUMNS = new DataColumn[0];
+private static final Map<String,Integer>EMPTY_COLUMN_NAME_INDEX=Collections.unmodifiableMap(new HashMap<String, Integer>(1));
+private static final List<DataRow>EMPTY_ROWS=Collections.unmodifiableList(new ArrayList<DataRow>(1)); 
+private String name;
 }

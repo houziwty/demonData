@@ -24,10 +24,33 @@ public class DataRow {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataRow.class);
 	private int length;
 	private DataTable dataTable;
-	private Object[]values;
-	public DataRow(DataTable dataTabel,ResultSet rs){
-		this.dataTable=dataTable;
-		length=dataTable.getColumnCount();
-		values=new Object[length];
+	private Object[] values;
+
+	public DataRow(DataTable dataTabel, ResultSet rs) {
+		this.dataTable = dataTable;
+		length = dataTable.getColumnCount();
+		values = new Object[length];
+
+		// 读取所有值
+		try {
+			int internalIndex;
+			for (int i = 1; i <= values.length; i++) {
+				internalIndex = i - 1;
+				values[internalIndex] = rs.getObject(i);
+			}
+		} catch (SQLException e) {
+			LOGGER.error(String.format("初始化DataRow出错：DataTable:%s", dataTable.getName()), e);
+		}
+	}
+	/**
+	 * 判定指定列是否为SQL NULL
+	 * 
+	 * @param columnIndex
+	 *            列序号
+	 * @return boolean
+	 */
+	public boolean isNull(int columnIndex)throws SQLException{
+		checkColumnIndexArg(columnIndex);
+		return values[columnIndex]==null;
 	}
 }

@@ -53,4 +53,10 @@ public class DataRow {
 		checkColumnIndexArg(columnIndex);
 		return values[columnIndex]==null;
 	}
+	private void checkColumnIndexArg(int columnIndex) throws SQLException{
+		if (columnIndex > length || columnIndex < 0) {
+			LOGGER.error("参数错误，请求列的序号超过界限");
+			throw new SQLException("参数错误，请求列的序号超过界限");
+		}
+	}
 }

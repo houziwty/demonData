@@ -3,6 +3,7 @@ package com.data.database;
 import java.util.List;
 
 
+
 /** 
 * @ClassName: Table 
 * @Description:  * <b>描述: </b>此类为数据库"表结构-->JAVA对象的映射"，通过JAVA对象形式表现数据库的表结构<br>
@@ -20,13 +21,63 @@ import java.util.List;
 public class Table {
 	private String tableName;
 	private List<Column> columns = null;
+	private List<String>primaryKeys=null;
+	private String extension=null;
+	
+	public Table(String tableName){
+		this.tableName=tableName;
+	}
+	
+	public String getTableName() {
+		return tableName;
+	}
+	/**
+	 * 此处用于设置扩展的建表语句，该语句会包含在{@link Table#toString()} 方法生成的建表脚本中，<br>
+	 * 可以用它加入例如索引等扩展语句
+	 * 
+	 * @param extendSQL
+	 */
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+	
+	/** 
+	* @Title: addColumns 
+	* @Description:  为表添加列字段
+	* @param @param column
+	* @param @return    设定文件 
+	* @return boolean    返回类型 
+	* @throws 
+	*/
+	public boolean addColumns(Column column){
+		return columns.add(column);
+	}
 
 	/**
 	 * 数据库中的列格式类型
-	 * 
-	 * @author Lv.Mingwei
-	 * 
 	 */
 	public static class Column {
+		private String name;
+		private ColumnType columnType;
+		private Integer length;
+		private boolean isNull;
+		private boolean isAutoIncrement;
+		private String defauleValue;
+		private static final int INT_DEFAULT_LENGTH = 11;
+		private static final int LONG_DEFAULT_LENGTH = 63;
+		
+	}
+	
+	enum ColumnType{
+		INT("int"), LONG("bigint"), DOUBLE("double"), DATETIME("datetime"), TIMESTAMP("timestamp"), VARCHAR("varchar"), TEXT(
+				"text");
+		private String value;
+		private ColumnType(String value)
+		{
+			this.value=value;
+		}
+		public String getValue(){
+			return this.value;
+		}
 	}
 }

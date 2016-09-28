@@ -82,7 +82,22 @@ public class Table {
 			Column column=new Column();
 			column.name=name;
 			column.length=length;
+			column.isNull=isNull;
+			column.columnType=ColumnType.VARCHAR;
+			column.defauleValue= defauleValue != null && defauleValue.length() > 0 ? "'" + defauleValue + "'" : null;
+			column.isAutoIncrement = false;
 			return column;	
+		}
+		
+		public static Column createIntColumn(String name, boolean isNull, Integer defauleValue){
+			Column column=new Column();
+			column.name=name;
+			column.length=Column.INT_DEFAULT_LENGTH;
+			column.isNull=isNull;
+			column.columnType=ColumnType.INT;
+			column.defauleValue = defauleValue != null ? String.valueOf(defauleValue) : null;
+			column.isAutoIncrement = false;
+			return column;		
 		}
 
 	}

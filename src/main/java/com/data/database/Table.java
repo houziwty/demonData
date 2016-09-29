@@ -131,6 +131,19 @@ public class Table {
 			column.isAutoIncrement = false;
 			return column;
 		}
+		
+		/**
+		 * 创建一个具有自增特性的int类型的列,列长度默认是10,默认不能为空<br>
+		 * 请注意，创建了此类型字段的表格，此字段默认会成为主键中的一个
+		 * 
+		 * @param name
+		 *            列名称
+		 * @return
+		 */
+		public static Column createAutoIncrementIntColumn(){
+			Column column = new Column();
+			return column;
+		}
 
 		public String getName() {
 			return name;

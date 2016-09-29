@@ -1,5 +1,6 @@
 package com.data.database;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,9 +43,22 @@ public class Table {
 
 	/**
 	 * @Title: addColumns @Description: 为表添加列字段 @param @param
-	 * column @param @return 设定文件 @return boolean 返回类型 @throws
+	 *         column @param @return 设定文件 @return boolean 返回类型 @throws
 	 */
 	public boolean addColumns(Column column) {
+		// 列字段格式自检未通过，说明格式有问题，因此返回添加失败
+		if (column == null || !column.check()) {
+			return false;
+		}
+		if (columns == null) {
+			columns = new ArrayList<Table.Column>();
+		}
+		// 不允许添加列名相同的字段(不区分大小写)
+		for (Column columnTemp : columns) {
+			if (columnTemp.getName().equalsIgnoreCase(column.getName())) {
+				return false;
+			}
+		}
 		return columns.add(column);
 	}
 
@@ -67,37 +81,54 @@ public class Table {
 		private Column() {
 
 		}
-		/** 
-		* @Title: createVarcharColumn 
-		* @Description:  创建一个varchar类型的列
-		* @param @param name
-		* @param @param length
-		* @param @param isNull
-		* @param @param defauleValue
-		* @param @return    设定文件 
-		* @return Column    返回类型 
-		* @throws 
-		*/
-		public static Column createVarcharColumn(String name, int length, boolean isNull, String defauleValue){
-			Column column=new Column();
-			column.name=name;
-			column.length=length;
-			column.isNull=isNull;
-			column.columnType=ColumnType.VARCHAR;
-			column.defauleValue= defauleValue != null && defauleValue.length() > 0 ? "'" + defauleValue + "'" : null;
-			column.isAutoIncrement = false;
-			return column;	
+
+		public boolean check() {
+			// TODO Auto-generated method stub
+			return false;
 		}
-		
-		public static Column createIntColumn(String name, boolean isNull, Integer defauleValue){
-			Column column=new Column();
-			column.name=name;
-			column.length=Column.INT_DEFAULT_LENGTH;
-			column.isNull=isNull;
-			column.columnType=ColumnType.INT;
+
+		/**
+		 * @Title: createVarcharColumn @Description:
+		 *         创建一个varchar类型的列 @param @param name @param @param
+		 *         length @param @param isNull @param @param
+		 *         defauleValue @param @return 设定文件 @return Column 返回类型 @throws
+		 */
+		public static Column createVarcharColumn(String name, int length, boolean isNull, String defauleValue) {
+			Column column = new Column();
+			column.name = name;
+			column.length = length;
+			column.isNull = isNull;
+			column.columnType = ColumnType.VARCHAR;
+			column.defauleValue = defauleValue != null && defauleValue.length() > 0 ? "'" + defauleValue + "'" : null;
+			column.isAutoIncrement = false;
+			return column;
+		}
+
+		public static Column createIntColumn(String name, boolean isNull, Integer defauleValue) {
+			Column column = new Column();
+			column.name = name;
+			column.length = Column.INT_DEFAULT_LENGTH;
+			column.isNull = isNull;
+			column.columnType = ColumnType.INT;
 			column.defauleValue = defauleValue != null ? String.valueOf(defauleValue) : null;
 			column.isAutoIncrement = false;
-			return column;		
+			return column;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public ColumnType getColumnType() {
+			return columnType;
+		}
+
+		public Integer getLength() {
+			return length;
+		}
+
+		public boolean isNull() {
+			return isNull;
 		}
 
 	}

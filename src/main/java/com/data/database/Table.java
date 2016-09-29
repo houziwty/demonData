@@ -3,6 +3,7 @@ package com.data.database;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * @ClassName: Table
  * @Description: * <b>描述: </b>此类为数据库"表结构-->JAVA对象的映射"，通过JAVA对象形式表现数据库的表结构<br>
@@ -62,6 +63,22 @@ public class Table {
 		return columns.add(column);
 	}
 
+	/** 
+	* @Title: addPrimaryKey 
+	* @Description:  向{@link Table}中增加主键，增加主键时必须要保证该对象中以存在相应的列
+	* @param @param primaryKey
+	* @param @return    设定文件 
+	* @return boolean    返回类型 
+	* @throws 
+	*/
+	public boolean addPrimaryKey(String primaryKey){
+		if(columns==null ||columns.size()==0){
+			return false;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * 数据库中的列格式类型
 	 */

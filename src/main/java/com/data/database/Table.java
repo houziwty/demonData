@@ -1,8 +1,9 @@
 package com.data.database;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @ClassName: Table
@@ -64,9 +65,9 @@ public class Table {
 	}
 
 	/**
-	 * @Title: addPrimaryKey @Description: 向{@link
-	 * Table}中增加主键，增加主键时必须要保证该对象中以存在相应的列 @param @param primaryKey @param @return
-	 * 设定文件 @return boolean 返回类型 @throws
+	 * @Title: addPrimaryKey @Description:
+	 *         向{@link Table}中增加主键，增加主键时必须要保证该对象中以存在相应的列 @param @param
+	 *         primaryKey @param @return 设定文件 @return boolean 返回类型 @throws
 	 */
 	public boolean addPrimaryKey(String primaryKey) {
 		if (columns == null || columns.size() == 0) {
@@ -162,7 +163,7 @@ public class Table {
 			column.isAutoIncrement = true;
 			return column;
 		}
-		
+
 		/**
 		 * 创建一个text类型的列字段
 		 * 
@@ -172,8 +173,8 @@ public class Table {
 		 *            是否为空
 		 * @return
 		 */
-		public static Column createTextColumn(String name,boolean isNull){
-			Column column=new Column();
+		public static Column createTextColumn(String name, boolean isNull) {
+			Column column = new Column();
 			column.name = name;
 			column.isNull = isNull;
 			column.columnType = ColumnType.TEXT;
@@ -182,7 +183,7 @@ public class Table {
 			column.isAutoIncrement = false;
 			return column;
 		}
-		
+
 		/**
 		 * 创建一个日期datime类型的列字段，当列字段有默认值时，会自动选用timestamp,无需调用者担心
 		 * 
@@ -194,8 +195,8 @@ public class Table {
 		 *            默认内容
 		 * @return
 		 */
-		public static Column  createDateTimeColumn(String name, boolean isNull, String defauleValue) {
-			Column column=new Column();
+		public static Column createDateTimeColumn(String name, boolean isNull, String defauleValue) {
+			Column column = new Column();
 			column.name = name;
 			column.isNull = isNull;
 			if (defauleValue != null && defauleValue.length() > 0) {
@@ -209,6 +210,7 @@ public class Table {
 			column.isAutoIncrement = false;
 			return column;
 		}
+
 		/**
 		 * 创建一个Long类型的列，根据MYSQL特性，会自动启用BIGINT，默认长度63位
 		 * 
@@ -253,12 +255,11 @@ public class Table {
 			return column;
 		}
 
-
 		/**
 		 * 以SQL语句的方式展示一个表结构
 		 */
-		public String toString(){
-			StringBuilder stringBuilder=new StringBuilder();
+		public String toString() {
+			StringBuilder stringBuilder = new StringBuilder();
 			// Step 1.拼接字段名及类型
 			stringBuilder.append("`").append(this.getName()).append("` ").append(this.getColumnType().getValue());
 
@@ -283,26 +284,25 @@ public class Table {
 			}
 			return stringBuilder.toString();
 		}
-		
-		
+
 		/**
 		 * 覆盖此方法的目的在于进行数据库两张表中的列格式对比
 		 */
 		@Override
-		public boolean equals(Object obj){
-			if(obj==null){
+		public boolean equals(Object obj) {
+			if (obj == null) {
 				return false;
 			}
-			if(this==obj){
+			if (this == obj) {
 				return true;
 			}
-			if(this.getClass()!=obj.getClass()){
+			if (this.getClass() != obj.getClass()) {
 				return false;
 			}
-			if(!(obj instanceof Column)){
+			if (!(obj instanceof Column)) {
 				return false;
 			}
-			Column column=(Column)obj;
+			Column column = (Column) obj;
 			if (this.name != null) {
 				if (!this.name.equalsIgnoreCase(column.name)) {
 					return false;
@@ -339,6 +339,7 @@ public class Table {
 
 			return true;
 		}
+
 		/**
 		 * 因为{@link Object#equals()}方法被覆盖了，为了防止{@link Column}
 		 * 被放置在Map中找不到对象，此处也覆盖了{@link Object#hashCode()}方法
@@ -354,6 +355,27 @@ public class Table {
 			result = 31 * result + (isAutoIncrement ? 1 : 0);
 			return result;
 		}
+
+		public static Column valueOf(ResultSet rs) throws SQLException {
+			int columnType = rs.getInt("DATA_TYPE");
+			switch (columnType) {
+			case java.sql.Types.INTEGER:
+				// 如果是主键,则创建int主键列，否则创建普通的int列
+				if (rs.getString("IS_AUTOINCREMENT") != null
+						&& rs.getString("IS_AUTOINCREMENT").equalsIgnoreCase("YES")) {
+					return Column.createAutoIncrementIntColumn(rs.getString("COLUMN_NAME"));
+				} else {
+					return Column.createIntColumn(rs.getString("COLUMN_NAME"),
+							rs.getInt("NULLABLE") == 0 ? false : true,
+							rs.getString("COLUMN_DEF") != null && rs.getString("COLUMN_DEF").length() > 0
+									? Integer.valueOf(rs.getString("COLUMN_DEF")) : null);
+				}
+			case java.sql.Types.VARCHAR:
+				return Column.createVarcharColumn(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"), rs.getInt("NULLABLE")==0?false:true, rs.getString("COLUMN_DEF"));
+			}
+			return null;
+		}
+
 		public String getName() {
 			return name;
 		}
@@ -369,6 +391,7 @@ public class Table {
 		public boolean isNull() {
 			return isNull;
 		}
+
 		public String getDefauleValue() {
 			return defauleValue;
 		}

@@ -372,7 +372,11 @@ public class Table {
 				}
 			case java.sql.Types.VARCHAR:
 				return Column.createVarcharColumn(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"), rs.getInt("NULLABLE")==0?false:true, rs.getString("COLUMN_DEF"));
+			case java.sql.Types.LONGVARCHAR:
+				return Column.createTextColumn(rs.getString("COLUMN_NAME"), rs.getInt("NULLABLE") == 0 ? false : true);
 			}
+			
+				
 			return null;
 		}
 

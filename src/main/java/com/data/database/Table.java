@@ -91,6 +91,15 @@ public class Table {
 		}
 		return false;
 	}
+	/**
+	 * 覆盖的toString()方法,对象的表示方式既为SQL语句
+	 */
+	@Override
+	public String toString(){
+		StringBuilder stringBuilder=new StringBuilder();
+		
+		return stringBuilder.toString();
+	}
 
 	/**
 	 * 数据库中的列格式类型
@@ -110,11 +119,6 @@ public class Table {
 		 */
 		private Column() {
 
-		}
-
-		public boolean check() {
-			// TODO Auto-generated method stub
-			return false;
 		}
 
 		/**
@@ -426,6 +430,26 @@ public class Table {
 			this.isNull = isNull;
 		}
 
+
+		/**
+		 * 为了保证{@link Column}
+		 * 相对于数据库表的约束性是相同的，因此会隐藏部分数据，防止该对象的数据被篡改，但是这样会影响到类的创建者无法看到类中的数据，
+		 * 也就无法检查此类是否适合创建数据库表 基于这个原因这里提供了一个方法， 用以在提交时检验此对象是否符合数据库列要求<br>
+		 * {@Column }对象是否符合数据库表结构的列要求
+		 * 
+		 * @return
+		 */
+		public boolean check(){
+			if (name == null || name.length() == 0) {
+				return false;
+			}
+			if (columnType == null) {
+				return false;
+			}
+
+			return true;
+		}
+		
 	}
 
 	enum ColumnType {

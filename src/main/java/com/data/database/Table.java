@@ -91,13 +91,18 @@ public class Table {
 		}
 		return false;
 	}
+
 	/**
 	 * 覆盖的toString()方法,对象的表示方式既为SQL语句
 	 */
 	@Override
-	public String toString(){
-		StringBuilder stringBuilder=new StringBuilder();
-		
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("create table `").append(tableName).append("`(");
+		//拼接列
+		if (columns != null && columns.size() != 0) {
+
+		}
 		return stringBuilder.toString();
 	}
 
@@ -430,7 +435,6 @@ public class Table {
 			this.isNull = isNull;
 		}
 
-
 		/**
 		 * 为了保证{@link Column}
 		 * 相对于数据库表的约束性是相同的，因此会隐藏部分数据，防止该对象的数据被篡改，但是这样会影响到类的创建者无法看到类中的数据，
@@ -439,7 +443,7 @@ public class Table {
 		 * 
 		 * @return
 		 */
-		public boolean check(){
+		public boolean check() {
 			if (name == null || name.length() == 0) {
 				return false;
 			}
@@ -449,7 +453,7 @@ public class Table {
 
 			return true;
 		}
-		
+
 	}
 
 	enum ColumnType {

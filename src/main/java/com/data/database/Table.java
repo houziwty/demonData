@@ -99,10 +99,33 @@ public class Table {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("create table `").append(tableName).append("`(");
-		//拼接列
+		// 拼接列
 		if (columns != null && columns.size() != 0) {
-
+			for (Column column : columns) {
+				stringBuilder.append(column.toString()).append(",");
+				if (column.isAutoIncrement) {
+					// 如果某一列是自增字段,那么此列默认是主键中的一个
+					this.addPrimaryKey(column.getName());
+				}
+			}
 		}
+		// 拼接主键
+		if (primaryKeys != null && primaryKeys.size() != 0) {
+			stringBuilder.append("primary key (");
+			for (String primaryKey : primaryKeys) {
+				stringBuilder.append("`").append(primaryKey).append("`,");
+			}
+			stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length()).append(")").append(",");
+		}
+		if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
+			stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
+		}
+		// Step3. 拼接扩展内容，此扩展内容可以包括例如索引等SQL
+		if (extension != null && extension.length() > 0) {
+			stringBuilder.append(",");
+			stringBuilder.append(extension);
+		}
+		stringBuilder.append(")");
 		return stringBuilder.toString();
 	}
 

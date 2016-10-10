@@ -371,12 +371,25 @@ public class Table {
 									? Integer.valueOf(rs.getString("COLUMN_DEF")) : null);
 				}
 			case java.sql.Types.VARCHAR:
-				return Column.createVarcharColumn(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"), rs.getInt("NULLABLE")==0?false:true, rs.getString("COLUMN_DEF"));
+				return Column.createVarcharColumn(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"),
+						rs.getInt("NULLABLE") == 0 ? false : true, rs.getString("COLUMN_DEF"));
 			case java.sql.Types.LONGVARCHAR:
 				return Column.createTextColumn(rs.getString("COLUMN_NAME"), rs.getInt("NULLABLE") == 0 ? false : true);
+			case java.sql.Types.BIGINT:
+				return Column.createLongColumn(rs.getString("COLUMN_NAME"), rs.getInt("NULLABLE") == 0 ? false : true,
+						rs.getString("COLUMN_DEF") != null && rs.getString("COLUMN_DEF").length() > 0
+								? Long.valueOf(rs.getString("COLUMN_DEF")) : null);
+			case java.sql.Types.DOUBLE:
+				return Column.createDoubleColumn(rs.getString("COLUMN_NAME"), rs.getInt("NULLABLE") == 0 ? false : true,
+						rs.getString("COLUMN_DEF") != null && rs.getString("COLUMN_DEF").length() > 0
+								? Double.valueOf(rs.getString("COLUMN_DEF")) : null);
+			case java.sql.Types.TIMESTAMP:
+				return Column.createDateTimeColumn(rs.getString("COLUMN_NAME"),
+						rs.getInt("NULLABLE") == 0 ? false : true, rs.getString("COLUMN_DEF"));
+			default:
+				break;
 			}
-			
-				
+
 			return null;
 		}
 

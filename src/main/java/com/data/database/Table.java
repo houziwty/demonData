@@ -128,6 +128,17 @@ public class Table {
 		stringBuilder.append(")");
 		return stringBuilder.toString();
 	}
+	
+	/**
+	 * 覆盖equals方法，目的为用于两个数据库表结构的比较
+	 */
+	@Override 
+	public boolean equals(Object obj){
+		if(obj==null){
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * 数据库中的列格式类型

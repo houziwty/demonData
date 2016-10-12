@@ -137,6 +137,11 @@ public class Table {
 		if(obj==null){
 			return false;
 		}
+		// 如果指向同一内存地址，不用比对了，直接相同
+		if(this==obj){
+			return true;
+		}
+		
 		return true;
 	}
 

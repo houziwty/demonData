@@ -8,5 +8,10 @@ package com.common.diagnostic.perfmon;
 *  
 */
 public class Stopwatch {
+	public interface Watchable{
+		void end(long nanos);
+		void fail(long nanos,String message);
+		void fail(long nanos,Throwable error);
+	}
 
 }

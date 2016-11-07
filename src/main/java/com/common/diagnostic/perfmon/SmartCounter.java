@@ -8,5 +8,11 @@ package com.common.diagnostic.perfmon;
 *  
 */
 public interface SmartCounter {
-
+void reset();
+void increase();
+void decrease();
+void increaseBy(long value);
+void setRawValue(long value);
+void increaseRatio(boolean hitted);
+Stopwatch begin();
 }

@@ -1,6 +1,7 @@
 package com.common.diagnostic.perfmon;
 
 import com.common.diagnostic.obsercation.ObservableUnit;
+import com.common.diagnostic.obsercation.ObserverReportSnapshot;
 
 public class CounterEntity implements SmartCounter,ObservableUnit {
 
@@ -36,6 +37,18 @@ public class CounterEntity implements SmartCounter,ObservableUnit {
 
 	@Override
 	public Stopwatch begin() {
+		return null;
+	}
+
+	@Override
+	public ObserverReportSnapshot getObserverSnapshot() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getInstanceName() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

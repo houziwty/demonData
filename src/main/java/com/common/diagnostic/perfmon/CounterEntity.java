@@ -42,13 +42,11 @@ public class CounterEntity implements SmartCounter,ObservableUnit {
 
 	@Override
 	public ObserverReportSnapshot getObserverSnapshot() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getInstanceName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

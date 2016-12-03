@@ -15,6 +15,8 @@ public interface MongoCacheClient {
 	
 	void insertMany(String name,List<Object> o);
 
+	void updateOne(String name,Bson filter, Bson update);
+	
 	void save(Object o);
 
 	<T> T findOne(String name,BasicDBObject filter,Class<?> classz);

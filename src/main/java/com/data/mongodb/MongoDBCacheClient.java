@@ -75,7 +75,6 @@ public class MongoDBCacheClient implements MongoCacheClient {
 
 	@Override
 	public void save(Object o) {
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,6 +97,12 @@ public class MongoDBCacheClient implements MongoCacheClient {
 	public void insertMany(String name, List<Object> o) {
 		dbCollection = mongoDatabase.getCollection(name);
 		dbCollection.insertMany(o);
+	}
+
+	@Override
+	public void updateOne(String name,Bson filter, Bson update) {
+		dbCollection = mongoDatabase.getCollection(name);
+		dbCollection.updateMany(filter, update);
 	}
 
 }

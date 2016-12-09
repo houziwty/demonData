@@ -33,4 +33,11 @@ public class Limiter {
 	public int getCount(){
 		return counter.get();
 	}
+	public void setCount(int v){
+		counter.set(v);
+	}
+	public int getCountPerSecond(){
+		return counterPerSecond.get();
+	}
+	
 }

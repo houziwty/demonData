@@ -27,4 +27,10 @@ public class Limiter {
 		counter.incrementAndGet();
 		counterPerSecond.incrementAndGet();
 	}
+	public void decrement(){
+		counter.decrementAndGet();
+	}
+	public int getCount(){
+		return counter.get();
+	}
 }

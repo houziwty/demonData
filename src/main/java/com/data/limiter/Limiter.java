@@ -39,5 +39,28 @@ public class Limiter {
 	public int getCountPerSecond(){
 		return counterPerSecond.get();
 	}
+	public void setCountPerSecond(int v){
+		counterPerSecond.set(v);
+	}
+	public void resetCounter(){
+		counter.set(0);
+	}
+	public void resetCOuntPerSecond(){
+		counterPerSecond.set(0);
+	}
+	/**
+	 * 总量超过限定数量
+	 * @return
+	 */
+	public boolean isOverFlow(){
+		return counter.get()>=maxCount;
+	}
 	
+	/**
+	 * 每秒超过限定数量
+	 * @return
+	 */
+	public boolean isOverFlowPerSecond(){
+		return counterPerSecond.get()>= maxCountPerSecond ;	
+	}
 }

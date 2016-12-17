@@ -3,6 +3,7 @@ package com.data.limiter;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LimiterFactory {
@@ -46,5 +47,37 @@ public class LimiterFactory {
 				maxCountPerSecond = Integer.parseInt(prop.get("maxCountPerSecond"));
 			isInit = true;
 		}
+	}
+
+	/**
+	 * 限制 maxCount,maxCountPerSecond
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Limiter getLimiter(String key, int maxCount, int maxCountPerSecond) {
+		if (!limiters.containsKey(key)) {
+			synchronized (limiters) {
+				final Limiter limiter = new Limiter(maxCount, maxCountPerSecond);
+				timer.scheduleAtFixedRate(new TimerTask() {
+
+					@Override
+					public void run() {
+						limiter.resetCounter();
+					}
+				}, period, period);
+
+				timer.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						limiter.resetCOuntPerSecond();
+					}
+				}, 100, 100);
+
+				limiters.put(key, limiter);
+			}
+		}
+		return limiters.get(key);
 	}
 }

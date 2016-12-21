@@ -10,7 +10,7 @@ import com.google.common.cache.LoadingCache;
 public class GuavaTest {
     public static void main(String []args){
         System.out.println("begin");
-//        loadCache();
+        loadCache();
     }
     static  void loadCache(){
         LoadingCache<String,String> cache= CacheBuilder.newBuilder().build(

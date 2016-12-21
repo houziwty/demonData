@@ -1,5 +1,6 @@
 package com.data.cache;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.CacheBuilder;
@@ -20,12 +21,11 @@ public class GuavaCache<K, V> {
     }
 
     public void put(K key, V value) {
-
         graphs.put(key,value);
     }
 
-    public V get(K key, V value) {
-        return value;
+    public V get(K key) throws ExecutionException {
+        return graphs.get(key);
     }
 
 

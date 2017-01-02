@@ -10,7 +10,7 @@ import com.google.common.cache.LoadingCache;
 public class GuavaCache<K, V> {
 
     LoadingCache<K, V> graphs;
-    GuavaCache(K key,V value){
+    	GuavaCache(K key,V value){
         graphs =CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(10, TimeUnit.MINUTES)
                 .build(new CacheLoader<K, V>() {
                     @Override
@@ -18,6 +18,9 @@ public class GuavaCache<K, V> {
                         return (V) value;
                     }
                 });
+    }
+   V getCallableCache(final Object key){
+	return null;
     }
 
     public void put(K key, V value) {

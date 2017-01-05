@@ -65,6 +65,7 @@ public class RedisCacheClient implements CacheClient {
 	public RedisCacheClient(String servers, String app) {
 		List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
 		try {
+
 			String[] hosts = servers.trim().split("\\|");
 			if (hosts.length > 2) {
 				for (String host : hosts) {

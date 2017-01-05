@@ -11,7 +11,6 @@ import com.google.common.cache.LoadingCache;
 public class GuavaCache<K, V> {
 
     LoadingCache<K, V> graphs;
-<<<<<<< HEAD
     Cache<K, V> cache;
 
     public GuavaCache(){
@@ -19,11 +18,7 @@ public class GuavaCache<K, V> {
     }
 
     public GuavaCache(V value) {
-        graphs = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(10, TimeUnit.MINUTES)
-=======
-    	GuavaCache(K key,V value){
         graphs =CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(10, TimeUnit.MINUTES)
->>>>>>> origin/master
                 .build(new CacheLoader<K, V>() {
                     @Override
                     public V load(K key) throws Exception {

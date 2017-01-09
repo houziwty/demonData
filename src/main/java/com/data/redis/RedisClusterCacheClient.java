@@ -33,7 +33,7 @@ public class RedisClusterCacheClient implements CacheClient {
 
         Set<HostAndPort> jedisClusterNode = new HashSet<>();
         try{
-
+            String[] hosts = servers.trim().split("\\|");
         }catch(Exception e){
 
         }

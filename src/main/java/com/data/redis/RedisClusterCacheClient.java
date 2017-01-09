@@ -1,9 +1,11 @@
 package com.data.redis;
 
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.Tuple;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +14,31 @@ import java.util.Set;
  * Created by Haoweilai on 2016/12/21.
  */
 public class RedisClusterCacheClient implements CacheClient {
+
+
+    // 默认超时时间
+    private static final int DEFAULT_TIMEOUT = 400;
+
+    // 默认最大活动连接数
+    private static final int MAX_ACTIVE = 20;
+
+    // 默认最大空闲连接数
+    private static final int MAX_IDEL = 10;
+
+    // 默认最大等待
+    private static final int MAX_WAIT = 100;
+
+
+    public RedisClusterCacheClient(String servers, String app) {
+
+        Set<HostAndPort> jedisClusterNode = new HashSet<>();
+        try{
+            
+        }catch(Exception e){
+
+        }
+    }
+
     @Override
     public void cleanup() {
 

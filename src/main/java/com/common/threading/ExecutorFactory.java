@@ -3,6 +3,7 @@ package com.common.threading;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
@@ -53,6 +54,19 @@ public class ExecutorFactory {
 			FixedObservableExecutor executor = new FixedObservableExecutor(name, innerExecutor, limit, size);
 		executors.put(name, executor);
 			LOGGER.info("Create FixedExecutor:"+name+" size={} limit={} ", size, limit);
+		}
+		return getExecutor(name);
+	}
+	/**
+	 *
+	 * 新增一个可扩充的线程池
+	 * @param name
+	 * @return
+	 */
+	public synchronized static Executor newCachedExecutor(String name){
+		if(executors.get(name)==null){
+			Executor innerExecutor=Executors.newCachedThreadPool();
+			CachedObserverableExecutor executor=new CachedObserverableExecutor(name,innerExecutor);
 		}
 		return getExecutor(name);
 	}

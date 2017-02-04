@@ -3,6 +3,7 @@ package com.common.threading;
 import java.util.concurrent.Executor;
 
 import com.common.diagnostic.perfmon.spi.NumberCounter;
+import com.common.diagnostic.perfmon.spi.TransactionCounter;
 
 
 /**
@@ -18,6 +19,7 @@ public class ObservableExecutor implements Executor {
  private String name;
  private Executor innerExecutor;
  private NumberCounter sizeCounter;
+    private TransactionCounter workerCounter;
 	@Override
 	public void execute(Runnable command) {
 

@@ -32,4 +32,38 @@ private long begin;
 	public long getBeginNanos(){
 		return begin;
 	}
+	public long getNanos()
+	{
+		return System.nanoTime() - begin;
+	}
+	public double getSeconds()
+	{
+		return (System.nanoTime() - begin) / 1E9;
+	}
+
+	public double getMillseconds()
+	{
+		return (double)(System.nanoTime() - begin) / 1E6;
+	}
+	public void end(){
+		long nanos=System.nanoTime()-begin;
+		if(isDone.compareAndSet(false,true)&&watchable!=null){
+			watchable.end(nanos);
+		}
+	}
+	public void fail(String message)
+	{
+		long nanos = System.nanoTime() - begin;
+		if (isDone.compareAndSet(false, true) && watchable != null) {
+			watchable.fail(nanos, message);
+		}
+	}
+
+	public void fail(Throwable error)
+	{
+		long nanos = System.nanoTime() - begin;
+		if (isDone.compareAndSet(false, true) && watchable != null) {
+			watchable.fail(nanos, error);
+		}
+	}
 }

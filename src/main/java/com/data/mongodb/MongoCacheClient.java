@@ -7,7 +7,12 @@ import org.bson.conversions.Bson;
 import com.mongodb.BasicDBObject;
 
 public interface MongoCacheClient {
+	
+
+	
 	void createCollection(String name);
+	
+
 
 	void dropCollection(String name);
 	

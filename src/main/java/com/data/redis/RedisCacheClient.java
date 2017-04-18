@@ -880,7 +880,7 @@ public class RedisCacheClient implements CacheClient {
 	public void zadd(String key, double score, String member) {
 		ShardedJedis redis = pool.getResource();
 		try {
-			Map<String, Double> scoreMembers = new HashMap<>();
+			Map<String, Double> scoreMembers = new HashMap<String, Double>();
 			scoreMembers.put(member, score);
 			redis.zadd(key, scoreMembers);
 		} catch (Exception ex) {

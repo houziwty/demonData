@@ -31,7 +31,7 @@ public class RedisClusterCacheClient implements CacheClient {
 
     public RedisClusterCacheClient(String servers, String app) {
 
-        Set<HostAndPort> jedisClusterNode = new HashSet<>();
+        Set<HostAndPort> jedisClusterNode = new HashSet<HostAndPort>();
         try{
             String[] hosts = servers.trim().split("\\|");
         }catch(Exception e){

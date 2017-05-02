@@ -80,7 +80,7 @@ public class RedisLock {
      * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
      */
-    public void lock(String key, int keyExpireSecond) {
+    public void lock(String key, int keyExpireSecond) throws InterruptedException {
         if (isBlank(key) || keyExpireSecond < 0) {
             throw new IllegalArgumentException("param is illegal");
         }
@@ -97,21 +97,28 @@ public class RedisLock {
             if (setNx == 1) {
                 redisClient.expire(key, keyExpireSecond);
                 return;
-            } else if (!isSaveLock) {
-                lockThread = saveLock(key);//保证一个key对应一个lock
-                lockThread.getLock().lock();//线程获取锁
-                isSaveLock = true;
-            }
-            doNum++;
-            if (doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
-                doNum = 0;
-                LockSupport.parkNanos(Thread.currentThread(), parkThreadNano);
+            } else {
+                if (!isSaveLock) {
+                    lockThread = saveLock(key);//保证一个key对应一个lock
+                    lockThread.getLock().lock();//线程获取锁
+                    isSaveLock = true;
+                }
+                doNum++;
+                if (doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
+                    doNum = 0;
+                    LockSupport.parkNanos(Thread.currentThread(), parkThreadNano);
+                }
             }
         } while (true);
     }
 
-    private boolean isBlank(String key) {
-        return false;
+    private boolean isBlank(CharSequence key) {
+        int strLen;
+        if (key == null || (strLen = key.length()) == 0) return true;
+        for (int i = 0; i < strLen; i++)
+            if (!Character.isWhitespace(cs.charAt(i)))
+                return false;
+        return true;
     }
 
     /**
@@ -122,7 +129,38 @@ public class RedisLock {
      * @throws InterruptedException
      */
     public void lockInterruptibly(String key, int keyExpireSecond) throws InterruptedException {
-
+        if (isBlank(key) || keyExpireSecond < 0) {
+            throw new IllegalArgumentException("param is illegal");
+        }
+        boolean isSaveLock = false;
+        RedisLockThread lockThread = null;
+        if (fair) {//公平锁
+            lockThread = saveLockInterruptibly(key);//保证一个key对应一个lock
+            lockThread.getLock().lockInterruptibly();//线程获取锁
+            isSaveLock = true;
+        }
+        int doNum = 0;
+        do {
+            long setNx = redisClient.setnx(key, String.valueOf(System.currentTimeMillis()));
+            if (setNx == 1) {
+                redisClient.expire(key, keyExpireSecond);
+                return;
+            } else {
+                if (!isSaveLock) {
+                    lockThread = saveLockInterruptibly(key);//保证一个key对应一个lock
+                    lockThread.getLock().lockInterruptibly();//线程获取锁
+                    isSaveLock = true;
+                }
+                doNum ++;
+                if(doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
+                    doNum = 0;
+                    LockSupport.parkNanos(Thread.currentThread(), parkThreadNano);
+                    if(Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                }
+            }
+        } while (true);
     }
 
     /**
@@ -133,6 +171,14 @@ public class RedisLock {
      * @return 如果获取了锁，则返回 true 否则返回 false。
      */
     public boolean tryLock(String key, int keyExpireSecond) {
+        if (isBlank(key) || keyExpireSecond < 0) {
+            throw new IllegalArgumentException("param is illegal");
+        }
+        long setNx=redisClient.setnx(key,String.valueOf(System.currentTimeMillis()));
+        if(setNx==1){
+            redisClient.expire(key,keyExpireSecond);
+            return true;
+        }
         return false;
     }
 

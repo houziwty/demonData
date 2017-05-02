@@ -2,13 +2,17 @@ package com.data.redis;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Demon on 2017/4/18.
  */
 public class RedisLock {
+
+
     private ReentrantLock globalLock;
 
     /**
@@ -62,35 +66,69 @@ public class RedisLock {
         return redisClient;
     }
 
-    public Integer getBlockingAfterLockNum(){
+    public Integer getBlockingAfterLockNum() {
         return blockingAfterLockNum;
     }
+
     public long getParkThreadMilliscond() {
         return parkThreadMilliscond;
     }
 
     /**
      * 不可中断，直到获取锁为止
-     * @param key redis的key值
+     *
+     * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
      */
-    public void lock(String key, int keyExpireSecond){
+    public void lock(String key, int keyExpireSecond) {
+        if (isBlank(key) || keyExpireSecond < 0) {
+            throw new IllegalArgumentException("param is illegal");
+        }
+        boolean isSaveLock = false;
+        RedisLockThread lockThread = null;
+        if (fair) {//公平锁
+            lockThread = saveLock(key);//保证一个key对应一个lock
+            lockThread.getLock().lock();//线程获取锁
+            isSaveLock = true;
+        }
+        int doNum = 0;
+        do {
+            long setNx = redisClient.setnx(key, String.valueOf(System.currentTimeMillis()));
+            if (setNx == 1) {
+                redisClient.expire(key, keyExpireSecond);
+                return;
+            } else if (!isSaveLock) {
+                lockThread = saveLock(key);//保证一个key对应一个lock
+                lockThread.getLock().lock();//线程获取锁
+                isSaveLock = true;
+            }
+            doNum++;
+            if (doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
+                doNum = 0;
+                LockSupport.parkNanos(Thread.currentThread(), parkThreadNano);
+            }
+        } while (true);
+    }
 
+    private boolean isBlank(String key) {
+        return false;
     }
 
     /**
      * 如果当前线程未被中断，则直到获取锁为止
-     * @param key redis的key值
+     *
+     * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
      * @throws InterruptedException
      */
-    public void lockInterruptibly(String key, int keyExpireSecond) throws InterruptedException  {
+    public void lockInterruptibly(String key, int keyExpireSecond) throws InterruptedException {
 
     }
 
     /**
      * 如果锁可用，则获取锁，并立即返回值 true。如果锁不可用，则此方法将立即返回值 false。
-     * @param key redis的key值
+     *
+     * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
      * @return 如果获取了锁，则返回 true 否则返回 false。
      */
@@ -101,7 +139,8 @@ public class RedisLock {
     /**
      * 如果锁可用，则此方法将立即返回值 true。
      * 如果锁不可用，出于线程调度目的，将挂起当前线程，如果在线程挂起期间中断线程，则排除 InterruptedException
-     * @param key redis的key值
+     *
+     * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
      * @param timeout
      * @param unit
@@ -114,13 +153,16 @@ public class RedisLock {
 
     /**
      * 释放锁
+     *
      * @param key redis的key值
      */
-    public void unlock(String key) {}
+    public void unlock(String key) {
+    }
 
     /**
      * 保证一个key对应一个lock
      * key与lock是一对一的关系，lock与线程是一对多的关系
+     *
      * @param key
      * @return
      * @throws InterruptedException
@@ -132,20 +174,22 @@ public class RedisLock {
     /**
      * 保证一个key对应一个lock
      * key与lock是一对一的关系，lock与线程是一对多的关系
+     *
      * @param key
      * @return
      * @throws InterruptedException
      */
-    private RedisLockThread saveLockInterruptibly(String key) throws InterruptedException{
+    private RedisLockThread saveLockInterruptibly(String key) throws InterruptedException {
         return null;
 
     }
 
     /**
      * 调试使用
+     *
      * @return
      */
-    public String getContentOfKeyLockMap(String key){
+    public String getContentOfKeyLockMap(String key) {
         return null;
     }
 

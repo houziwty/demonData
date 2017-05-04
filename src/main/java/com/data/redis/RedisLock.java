@@ -116,7 +116,7 @@ public class RedisLock {
         int strLen;
         if (key == null || (strLen = key.length()) == 0) return true;
         for (int i = 0; i < strLen; i++)
-            if (!Character.isWhitespace(cs.charAt(i)))
+            if (!Character.isWhitespace(key .charAt(i)))
                 return false;
         return true;
     }
@@ -194,6 +194,11 @@ public class RedisLock {
      * @throws InterruptedException
      */
     public boolean tryLock(String key, int keyExpireSecond, long timeout, TimeUnit unit) throws InterruptedException {
+        long lastTime=System.nanoTime();
+        long nanoTimeOut=unit.toNanos(timeout);
+        if(isBlank(key)||keyExpireSecond<0){
+            throw  new IllegalArgumentException("param is illegal");
+        }
         return false;
     }
 

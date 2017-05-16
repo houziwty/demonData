@@ -2,7 +2,7 @@ package com.data.redis;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
@@ -116,7 +116,7 @@ public class RedisLock {
         int strLen;
         if (key == null || (strLen = key.length()) == 0) return true;
         for (int i = 0; i < strLen; i++)
-            if (!Character.isWhitespace(key .charAt(i)))
+            if (!Character.isWhitespace(key.charAt(i)))
                 return false;
         return true;
     }
@@ -151,11 +151,11 @@ public class RedisLock {
                     lockThread.getLock().lockInterruptibly();//线程获取锁
                     isSaveLock = true;
                 }
-                doNum ++;
-                if(doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
+                doNum++;
+                if (doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
                     doNum = 0;
                     LockSupport.parkNanos(Thread.currentThread(), parkThreadNano);
-                    if(Thread.interrupted()) {
+                    if (Thread.interrupted()) {
                         throw new InterruptedException();
                     }
                 }
@@ -174,9 +174,9 @@ public class RedisLock {
         if (isBlank(key) || keyExpireSecond < 0) {
             throw new IllegalArgumentException("param is illegal");
         }
-        long setNx=redisClient.setnx(key,String.valueOf(System.currentTimeMillis()));
-        if(setNx==1){
-            redisClient.expire(key,keyExpireSecond);
+        long setNx = redisClient.setnx(key, String.valueOf(System.currentTimeMillis()));
+        if (setNx == 1) {
+            redisClient.expire(key, keyExpireSecond);
             return true;
         }
         return false;
@@ -184,7 +184,8 @@ public class RedisLock {
 
     /**
      * 如果锁可用，则此方法将立即返回值 true。
-     * 如果锁不可用，出于线程调度目的，将挂起当前线程，如果在线程挂起期间中断线程，则排除 InterruptedException
+     * 如果锁不可用，出于线程调度目的，将挂起当前线程，
+     * 如果在线程挂起期间中断线程，则排除 InterruptedException
      *
      * @param key             redis的key值
      * @param keyExpireSecond redis key的有效期
@@ -194,12 +195,66 @@ public class RedisLock {
      * @throws InterruptedException
      */
     public boolean tryLock(String key, int keyExpireSecond, long timeout, TimeUnit unit) throws InterruptedException {
-        long lastTime=System.nanoTime();
-        long nanoTimeOut=unit.toNanos(timeout);
-        if(isBlank(key)||keyExpireSecond<0){
-            throw  new IllegalArgumentException("param is illegal");
+        long lastTime = System.nanoTime();
+        long nanoTimeOut = unit.toNanos(timeout);
+        if (isBlank(key) || keyExpireSecond < 0) {
+            throw new IllegalArgumentException("param is illegal");
         }
-        return false;
+        boolean isSaveLock = false;
+        RedisLockThread lockThread = null;
+        if (fair) {//公平锁
+            lockThread = saveLockInterruptibly(key);
+            boolean isLock = lockThread.getLock().tryLock(timeout, unit);
+            if (!isLock) {//没有获取锁
+                lockThread.removeThreadOfLock(Thread.currentThread());//删除lock对应的线程
+                return isLock;
+            } else {
+                isSaveLock = true;
+            }
+        }
+        int doNum = 0;//do{}while 循环多少次挂起线程
+        do {
+            long setNx = redisClient.setnx(key, String.valueOf(System.currentTimeMillis()));
+            if (setNx == 1) {
+                redisClient.expire(key, keyExpireSecond);
+                return true;
+            } else {
+                if (isSaveLock) {//非公平锁
+                    lockThread = saveLockInterruptibly(key);
+                    boolean isLock = lockThread.getLock().tryLock(timeout, unit);
+                    if (!isLock) {
+                        lockThread.removeThreadOfLock(Thread.currentThread());//删除lock对应的线程
+                        return isLock;
+                    } else {
+                        isSaveLock = true;
+                    }
+                }
+                //超时
+                if (nanoTimeOut <= 0) {
+                    lockThread.removeThreadOfLock(Thread.currentThread());//删除lock对应的线程
+                    lockThread.getLock().unlock();//lock释放锁
+                    //删除 key 对应的锁
+                    globalLock.lock();
+                    if (lockThread.getThreadsOfLock() == 0) {
+                        //lock对应的线程数为 0，从集合中删除 key对应的lock。
+                        keyLockMap.remove(key);
+                    }
+                    globalLock.unlock();
+                    return false;
+                }
+                doNum++;
+                if (doNum == blockingAfterLockNum) {
+                    doNum = 0;
+                    long now = System.nanoTime();
+                    nanoTimeOut -= now - lastTime;
+                    LockSupport.parkNanos(Thread.currentThread(), nanoTimeOut);
+                    if (Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                }
+            }
+        } while (true);
+
     }
 
     /**
@@ -208,6 +263,22 @@ public class RedisLock {
      * @param key redis的key值
      */
     public void unlock(String key) {
+        globalLock.lock();
+        redisClient.del(key);//必须先删除redis的key
+        RedisLockThread lockThread = keyLockMap.get(key);//获取key对应的lock
+        if (lockThread != null) {
+            if (Thread.currentThread() != lockThread.getThreadOfLock(Thread.currentThread())) {
+                //当前线程是否在，lock对应的线程集合内
+                throw new IllegalMonitorStateException();
+            } else {
+                lockThread.removeThreadOfLock(Thread.currentThread());//删除lock对应的线程
+                lockThread.getLock().unlock();
+                if (lockThread.getThreadsOfLock() == 0) {//lock对应的线程数为 0，从集合中删除 key对应的lock。
+                    keyLockMap.remove(key);
+                }
+            }
+        }
+        globalLock.unlock();
     }
 
     /**
@@ -219,7 +290,17 @@ public class RedisLock {
      * @throws InterruptedException
      */
     private RedisLockThread saveLock(String key) {
-        return null;
+        globalLock.lock();//保证 saveLock 方法是原子操作
+        //保证一个 key 只创建一个 lock
+        RedisLockThread lockThread = keyLockMap.get(key);
+        if (lockThread == null) {
+            lockThread = new RedisLockThread(fair);
+            lockThread.saveThreadOfLock(Thread.currentThread());//保存 lock 与 线程的关系
+            keyLockMap.put(key, lockThread);
+        }
+        lockThread.saveThreadOfLock(Thread.currentThread());
+        globalLock.unlock();
+        return lockThread;
     }
 
     /**
@@ -231,7 +312,17 @@ public class RedisLock {
      * @throws InterruptedException
      */
     private RedisLockThread saveLockInterruptibly(String key) throws InterruptedException {
-        return null;
+        globalLock.lockInterruptibly();//保证 saveLockInterruptibly 方法是原子操作
+        //保证一个 key 只创建一个 lock
+        RedisLockThread lockThread = keyLockMap.get(key);
+        if (lockThread == null) {
+            lockThread = new RedisLockThread(fair);
+            lockThread.saveThreadOfLock(Thread.currentThread());//保存 lock 与 线程的关系
+            keyLockMap.put(key, lockThread);//保存 key 与  lock 的关系
+        }
+        lockThread.saveThreadOfLock(Thread.currentThread());//保存 lock 与 线程的关系
+        globalLock.unlock();
+        return lockThread;
 
     }
 
@@ -241,7 +332,17 @@ public class RedisLock {
      * @return
      */
     public String getContentOfKeyLockMap(String key) {
-        return null;
+        StringBuilder str = new StringBuilder();
+        str.append("keyLock count:").append(keyLockMap.size());
+
+        RedisLockThread lockThread = keyLockMap.get(key);
+        if(lockThread != null) {
+            str.append(",keyLockInfo:").append(lockThread.toString());
+        } else {
+            str.append(",keyLockInfo:").append("no lock");
+        }
+
+        return str.toString();
     }
 
 }

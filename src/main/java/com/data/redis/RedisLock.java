@@ -103,7 +103,7 @@ public class RedisLock {
                     lockThread.getLock().lock();//线程获取锁
                     isSaveLock = true;
                 }
-                
+
                 doNum++;
                 if (doNum == blockingAfterLockNum) {//获取锁几次后，让然获取不到锁，则挂起线程指定的时间。
                     doNum = 0;

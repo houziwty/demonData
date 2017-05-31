@@ -2,6 +2,7 @@ package com.data.redis;
 
 import redis.clients.jedis.*;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,12 +52,29 @@ public class RedisClusterCacheClient implements CacheClient {
 
     @Override
     public Long decr(String key) {
-        return null;
+        Long result = -1L;
+        try {
+            result = jc.decr(key);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                jc.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     @Override
     public void del(String... keys) {
+        jc.del(keys);
+    }
 
+    @Override
+    public void del(String key) {
+        jc.del(key);
     }
 
     @Override

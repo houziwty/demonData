@@ -1,5 +1,6 @@
 package com.data.redis;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,9 +13,11 @@ import redis.clients.jedis.Tuple;
 public interface CacheClient {
 	void cleanup();
 
-	Long decr(String key);
+	Long decr(String key) throws IOException;
 
 	void del(String... keys);
+
+	void del(String key);
 
 	Boolean exists(byte[] key);
 

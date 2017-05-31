@@ -124,6 +124,11 @@ public class RedisCacheClient implements CacheClient {
 	}
 
 	@Override
+	public void del(String key) {
+
+	}
+
+	@Override
 	public Boolean exists(byte[] key) {
 		ShardedJedis redis = pool.getResource();
 		Boolean result = false;

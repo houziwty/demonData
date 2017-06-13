@@ -17,7 +17,7 @@ public class GuavaCache<K, V> {
 
     }
 
-    public GuavaCache(V value) {
+    public GuavaCache(final V value) {
         graphs =CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(10, TimeUnit.MINUTES)
                 .build(new CacheLoader<K, V>() {
                     @Override

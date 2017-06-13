@@ -205,7 +205,7 @@ public class HashAlgorithms {
         return hash;
     }
 
- 
+
 
 	/**//**
      * Thomas Wang的算法，整数hash

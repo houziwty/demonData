@@ -51,9 +51,12 @@ public class ConsistentHashVirtualNode {
         String virtualNode = "";
         if (subMap.isEmpty()) {
             // 第一个Key就是顺时针过去离node最近的那个结点
-            Integer i = subMap.firstKey();
+            Integer i = virtualNodes.firstKey();
             // 返回对应的虚拟节点名称，这里字符串稍微截取一下
-            virtualNode = subMap.get(i);
+            virtualNode = virtualNodes.get(i);
+        }else{
+            Integer i = subMap.firstKey();
+            virtualNode = virtualNodes.get(i);
         }
         // 得到带路由的结点的Hash值
         return virtualNode.substring(0, virtualNode.indexOf("&&"));

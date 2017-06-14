@@ -10,7 +10,8 @@ public class ConsistanHash {
     private static SortedMap<Integer, String> sortedMap = new TreeMap<Integer, String>();
 
     static {
-        String[] dbs = {"", ""};
+        String[] dbs = {"192.168.0.0:111", "192.168.0.1:111", "192.168.0.2:111",
+                "192.168.0.3:111", "192.168.0.4:111"};
         for (int i = 0; i < dbs.length; i++) {
             int hash = HashAlgorithms.FNVHash1(dbs[i]);
             sortedMap.put(hash, dbs[i]);

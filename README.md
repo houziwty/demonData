@@ -1,3 +1,4 @@
 # demonData
-封装对MySQL NoSQL和 MQ 的数据访问
+  封装对MySQL NoSQL的数据访问
+  实现TCC分布式事务
 

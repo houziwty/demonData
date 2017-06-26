@@ -27,7 +27,7 @@ public class ConsistentHashVirtualNode {
     /**
      * 虚拟节点的数目，这里写死，为了演示需要，一个真实结点对应5个虚拟节点
      */
-    private static final int VIRTUAL_NODES = 5;
+        private static final int VIRTUAL_NODES = 5;
 
     static {
         // 先把原始的服务器添加到真实结点列表中

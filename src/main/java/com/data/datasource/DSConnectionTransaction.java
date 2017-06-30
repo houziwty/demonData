@@ -1,5 +1,8 @@
 package com.data.datasource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
@@ -19,6 +22,9 @@ import java.util.concurrent.Executor;
  * 对于 close操作, 调用内部N个实际的connection close
  */
 public class DSConnectionTransaction implements Connection {
+
+    private static final Logger logger= LoggerFactory.getLogger(DSConnectionTransaction.class);
+
     @Override
     public Statement createStatement() throws SQLException {
         return null;

@@ -3,6 +3,7 @@ package com.data.datasource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,11 +26,55 @@ import java.util.concurrent.Executor;
  */
 public class DSConnectionTransaction implements Connection {
 
-    private static final Logger logger= LoggerFactory.getLogger(DSConnectionTransaction.class);
-    DynamicDataSource dynamicDataSource=null;
-    DataSourceHolder dataSourceHolder=null;
-    Map<String,Connection>connectionMap=new HashMap<>();
-    LinkedList<Connection>connSequenceList=new LinkedList<>();
+    private static final Logger logger = LoggerFactory.getLogger(DSConnectionTransaction.class);
+    DynamicDataSource dynamicDataSource = null;
+    DataSourceHolder dataSourceHolder = null;
+    Map<String, Connection> connectionMap = new HashMap<>();
+    LinkedList<Connection> connSequenceList = new LinkedList<>();
+
+    int initTransactionLevel = -9;
+    int transactionLevel = initTransactionLevel;
+
+    public DSConnectionTransaction(DynamicDataSource dynamicDataSource, DataSourceHolder dataSourceHolder) {
+        this.dynamicDataSource = dynamicDataSource;
+        this.dataSourceHolder = dataSourceHolder;
+    }
+
+    public Connection getCurrentConnection() {
+        return getCurrentConnection(false);
+    }
+
+    public Connection getCurrentConnectionForTransaction() {
+        return getCurrentConnection(true);
+    }
+
+    //获取连接池
+    private Connection getCurrentConnection(boolean isForCommit) {
+        String currentDataSourceKey = this.dataSourceHolder.getDataSource();
+        if (currentDataSourceKey == null)
+            throw new RuntimeException("DataSourceHolder.getDataSource()==null");
+        Connection conn = null;
+        if (!connectionMap.containsKey(currentDataSourceKey)) {
+            DataSource dataSource = this.dynamicDataSource.determineTargetDataSource();
+            try {
+                conn = dataSource.getConnection();
+                conn.setAutoCommit(this.getAutoCommit());//设置是否自动提交
+                if (this.transactionLevel != initTransactionLevel) {
+                    conn.setTransactionIsolation(this.transactionLevel);//设置事务隔离级别
+                }
+
+            } catch (Exception ex) {
+                throw new RuntimeException("DataSource.getConnection() error", ex);
+            }
+            connectionMap.put(currentDataSourceKey, conn);
+        }
+        conn = connectionMap.get(currentDataSourceKey);
+        if (isForCommit) {//记录需要commit 或 rollback的connection
+            connSequenceList.remove(conn);
+            connSequenceList.addFirst(conn);
+        }
+        return conn;
+    }
 
     @Override
     public Statement createStatement() throws SQLException {

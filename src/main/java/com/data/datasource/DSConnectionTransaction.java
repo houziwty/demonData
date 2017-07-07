@@ -35,6 +35,13 @@ public class DSConnectionTransaction implements Connection {
     int initTransactionLevel = -9;
     int transactionLevel = initTransactionLevel;
 
+
+    //全局属性对应多个Connection
+    boolean commitFlag = true;
+
+    //
+    boolean closeFlag = false;
+
     public DSConnectionTransaction(DynamicDataSource dynamicDataSource, DataSourceHolder dataSourceHolder) {
         this.dynamicDataSource = dynamicDataSource;
         this.dataSourceHolder = dataSourceHolder;
@@ -76,34 +83,44 @@ public class DSConnectionTransaction implements Connection {
         return conn;
     }
 
+    private void clear() {
+        this.dynamicDataSource = null;
+        this.dataSourceHolder = null;
+        this.connectionMap.clear();
+        this.connectionMap = null;
+        this.connSequenceList.clear();
+        this.connSequenceList = null;
+    }
+
     @Override
     public Statement createStatement() throws SQLException {
-        return null;
+        return this.getCurrentConnectionForTransaction().createStatement();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return null;
+        return this.getCurrentConnectionForTransaction().prepareStatement(sql);
     }
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        return null;
+        return this.getCurrentConnectionForTransaction().prepareCall(sql);
     }
 
     @Override
     public String nativeSQL(String sql) throws SQLException {
-        return null;
+        return this.getCurrentConnection().nativeSQL(sql);
     }
+
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-
+        this.commitFlag = autoCommit;
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        return false;
+        return this.commitFlag;
     }
 
     @Override

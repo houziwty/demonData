@@ -137,7 +137,7 @@ public class DSConnectionTransaction implements Connection {
                     commitFlag = false;//commit 失败，之后的connection rollback
                     logger.error("commit exception ,next connection to rollback  : " + ex.getMessage(), ex);
                     if (commitIndex == 1) {
-                        commitException = new SQLException("commit fail at 1st connection,so  have no  dirty data ,no need to clear it", e);
+                        commitException = new SQLException("commit fail at 1st connection,so  have no  dirty data ,no need to clear it", ex);
                     } else {
                         commitException = new SQLException("DirtyDataException: commit fail at " + commitIndex + "th connection,commit success in " + (commitIndex - 1) + " connections, so  have dirty data ,need to clear it", ex);
                     }

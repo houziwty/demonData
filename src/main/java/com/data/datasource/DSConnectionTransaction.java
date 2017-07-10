@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -125,14 +122,67 @@ public class DSConnectionTransaction implements Connection {
 
     @Override
     public void commit() throws SQLException {
-
+        boolean toCommit = true;
+        SQLException commitException = null;
+        long startTime = System.currentTimeMillis();
+        Iterator<Connection> iterator = connSequenceList.iterator();
+        int commitIndex = 0;
+        while (iterator.hasNext()) {
+            Connection conn = iterator.next();
+            if (toCommit) {
+                commitIndex++;
+                try {
+                    conn.commit();
+                } catch (SQLException ex) {
+                    commitFlag = false;//commit 失败，之后的connection rollback
+                    logger.error("commit exception ,next connection to rollback  : " + ex.getMessage(), ex);
+                    if (commitIndex == 1) {
+                        commitException = new SQLException("commit fail at 1st connection,so  have no  dirty data ,no need to clear it", e);
+                    } else {
+                        commitException = new SQLException("DirtyDataException: commit fail at " + commitIndex + "th connection,commit success in " + (commitIndex - 1) + " connections, so  have dirty data ,need to clear it", ex);
+                    }
+                }
+            } else {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    logger.warn("Rollback exception (after commit)   " + ex.getMessage(), ex);
+                }
+            }
+        }
+        if (commitException != null) {
+            throw commitException;
+        }
+        long useTime = System.currentTimeMillis() - startTime;
+        if (logger.isDebugEnabled()) {
+            logger.debug("commit success finish, use time:{}", useTime);
+        }
     }
 
     @Override
     public void rollback() throws SQLException {
+        SQLException rollbackException = null;
+        Iterator<Connection> iterator = connSequenceList.iterator();
+        while (iterator.hasNext()) {
+            Connection conn = iterator.next();
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                rollbackException = ex;
+                logger.warn("Rollback exception  " + ex.getMessage(), ex);
+            }
+        }
+        if(rollbackException != null){
+            throw rollbackException;
+        }
+        if(logger.isDebugEnabled()) {
+            logger.debug("rollback ");
+        }
+    }
+    @Override
+    public void rollback(Savepoint savepoint) throws SQLException {
 
     }
-
     @Override
     public void close() throws SQLException {
 
@@ -140,7 +190,7 @@ public class DSConnectionTransaction implements Connection {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return false;
+        return this.closeFlag;
     }
 
     @Override
@@ -233,10 +283,7 @@ public class DSConnectionTransaction implements Connection {
         return null;
     }
 
-    @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
 
-    }
 
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {

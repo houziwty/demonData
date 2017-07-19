@@ -200,7 +200,18 @@ public class DSConnectionTransaction implements Connection {
 
     @Override
     public void close() throws SQLException {
-
+        Iterator<Connection> iterator = connectionMap.values().iterator();
+        while (iterator.hasNext()) {
+            Connection conn = iterator.next();
+            conn.setAutoCommit(true);
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                logger.warn("connection close exception  " + e.getMessage(), e);
+            }
+        }
+        clear();
+        closeFlag = true;
     }
 
     @Override
@@ -210,27 +221,27 @@ public class DSConnectionTransaction implements Connection {
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        return null;
+        return this.getCurrentConnection().getMetaData();
     }
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-
+        this.getCurrentConnection().setReadOnly(readOnly);
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        return false;
+        return this.getCurrentConnection().isReadOnly();
     }
 
     @Override
     public void setCatalog(String catalog) throws SQLException {
-
+        this.getCurrentConnection().setCatalog(catalog);
     }
 
     @Override
     public String getCatalog() throws SQLException {
-        return null;
+        return this.getCurrentConnection().getCatalog();
     }
 
     @Override

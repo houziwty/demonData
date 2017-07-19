@@ -422,16 +422,16 @@ public class DSConnectionTransaction implements Connection {
 
     @Override
     public int getNetworkTimeout() throws SQLException {
-        return 0;
+        return this.getCurrentConnection().getNetworkTimeout();
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
+        return this.getCurrentConnection().unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return false;
+        return this.getCurrentConnection().isWrapperFor(iface);
     }
 }

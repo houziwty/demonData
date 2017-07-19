@@ -29,8 +29,8 @@
       <file leaf-file-name="DSConnectionTransaction.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/data/datasource/DSConnectionTransaction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="137" column="89" selection-start-line="137" selection-start-column="89" selection-end-line="137" selection-end-column="89" />
+            <state relative-caret-position="216">
+              <caret line="189" column="40" selection-start-line="189" selection-start-column="40" selection-end-line="189" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -121,8 +121,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -811,15 +811,17 @@
       <workItem from="1499222208402" duration="1619000" />
       <workItem from="1499325774416" duration="3054000" />
       <workItem from="1499414919630" duration="3692000" />
-      <workItem from="1499668897785" duration="2661000" />
+      <workItem from="1499668897785" duration="3349000" />
+      <workItem from="1500344247892" duration="1207000" />
+      <workItem from="1500449501902" duration="3729000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="63228000" />
+    <option name="totallyTimeSpent" value="68852000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1219,8 +1221,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/data/datasource/DSConnectionTransaction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="131">
-          <caret line="137" column="89" selection-start-line="137" selection-start-column="89" selection-end-line="137" selection-end-column="89" />
+        <state relative-caret-position="216">
+          <caret line="189" column="40" selection-start-line="189" selection-start-column="40" selection-end-line="189" selection-end-column="40" />
           <folding />
         </state>
       </provider>

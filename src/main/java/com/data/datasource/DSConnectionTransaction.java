@@ -172,17 +172,32 @@ public class DSConnectionTransaction implements Connection {
                 logger.warn("Rollback exception  " + ex.getMessage(), ex);
             }
         }
-        if(rollbackException != null){
+        if (rollbackException != null) {
             throw rollbackException;
         }
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("rollback ");
         }
     }
+
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
-
+        SQLException rollbackException = null;
+        Iterator<Connection> iterator = connSequenceList.iterator();
+        while (iterator.hasNext()) {
+            Connection conn = iterator.next();
+            try {
+                conn.rollback(savepoint);
+            } catch (SQLException e) {
+                rollbackException = e;
+                logger.warn("Rollback exception  " + e.getMessage(), e);
+            }
+        }
+        if (rollbackException != null) {
+            throw rollbackException;
+        }
     }
+
     @Override
     public void close() throws SQLException {
 
@@ -282,7 +297,6 @@ public class DSConnectionTransaction implements Connection {
     public Savepoint setSavepoint(String name) throws SQLException {
         return null;
     }
-
 
 
     @Override

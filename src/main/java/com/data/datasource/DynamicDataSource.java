@@ -38,7 +38,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-//do nothing
         return null;
     }
     @Override
